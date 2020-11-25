@@ -41,7 +41,7 @@ namespace ChatServer
 
                 }
                 catch (System.InvalidOperationException)
-                {  }
+                { }
             }
         }
 

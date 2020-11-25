@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 
 namespace ChatServer.MessageHandler
 {
@@ -19,15 +20,16 @@ namespace ChatServer.MessageHandler
             List<DirectChatMessage> messageList = server.GetMessages();
             if (messageList != null)
             {
-                foreach (var savedMessage in messageList)
+                for (int i = 0; i < messageList.Count; i++)
                 {
-                    if (savedMessage.ToUserId == user.Id)
+                    if (messageList[i].ToUserId == user.Id)
                     {
-                        privateMessages.SavedMessage = savedMessage;
+                        privateMessages.SavedMessage = messageList[i];
                         var directChatJson = JsonSerializer.Serialize(privateMessages);
                         var chatMsg = System.Text.Encoding.UTF8.GetBytes(directChatJson);
                         client.GetStream().Write(chatMsg, 0, chatMsg.Length);
-                        server.RemoveMessages(savedMessage);
+                        server.RemoveMessages(messageList[i]);
+                        i--;
                     }
                 }
             }
